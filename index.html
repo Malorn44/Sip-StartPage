@@ -522,6 +522,7 @@
                                 <option value="forecast">3-Day Forecast</option>
                                 <option value="socials">Social Links</option>
                                 <option value="quotes">Quotes</option>
+                                <option value="haiku">Haiku</option>
                             </select>
                         </div>
                         
@@ -536,6 +537,7 @@
                                 <option value="forecast">3-Day Forecast</option>
                                 <option value="socials">Social Links</option>
                                 <option value="quotes">Quotes</option>
+                                <option value="haiku">Haiku</option>
                             </select>
                         </div>
                         
@@ -550,10 +552,11 @@
                                 <option value="forecast">3-Day Forecast</option>
                                 <option value="socials">Social Links</option>
                                 <option value="quotes">Quotes</option>
+                                <option value="haiku">Haiku</option>
                             </select>
                         </div>
                         
-                        <div class="setting-item-vertical">
+                        <div class="setting-item-vertical" id="quotes-settings-section">
                             <div class="setting-label">
                                 <i class="fa-solid fa-quote-left"></i>
                                 <span>Custom Quotes</span>
@@ -561,6 +564,17 @@
                             <div id="quotes-list"></div>
                             <button id="add-quote-btn" class="add-btn">
                                 <i class="fa-solid fa-plus"></i> Add Quote
+                            </button>
+                        </div>
+
+                        <div class="setting-item-vertical" id="haiku-settings-section">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-feather"></i>
+                                <span>Custom Haiku</span>
+                            </div>
+                            <div id="haiku-list"></div>
+                            <button id="add-haiku-btn" class="add-btn">
+                                <i class="fa-solid fa-plus"></i> Add Haiku
                             </button>
                         </div>
                     </div>
@@ -711,7 +725,7 @@
             </div>
             <div class="widget quote-widget">
                 <span class="widget-icon"><i class="fa-solid fa-quote-left"></i></span>
-                <span class="widget-text" id="quote">"The only way to do great work is to love what you do."</span>
+                <span class="widget-text" id="quote"></span>
             </div>
         </footer>
 
