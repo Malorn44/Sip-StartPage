@@ -1566,7 +1566,7 @@ body {
 .haiku-field-label {
     font-size: 0.78rem;
     color: var(--subtext1);
-    min-width: 4rem;
+    min-width: 2rem;
     text-align: right;
     flex-shrink: 0;
 }
@@ -1588,12 +1588,36 @@ body {
     border-color: var(--primary);
 }
 
+.haiku-text-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.haiku-text-group .haiku-input {
+    flex: none;
+}
+
+.haiku-furigana {
+    font-size: 0.75rem;
+    color: var(--subtext1);
+}
+
+.haiku-meaning {
+    resize: vertical;
+    line-height: 1.4;
+    height: 38px;
+    min-height: 38px;
+}
+
 .haiku-inline-row .haiku-field-label {
     min-width: auto;
 }
 
 .haiku-inline-row .haiku-field-label:first-child {
-    min-width: 4rem;
+    min-width: 2rem;
 }
 
 .haiku-input-short {
@@ -2367,9 +2391,44 @@ body {
 }
 
 .quote-widget {
+    position: relative;
     flex: 1;
     justify-content: flex-end;
     min-width: 0;
+}
+
+.haiku-tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.75rem);
+    right: 0;
+    background: var(--surface0);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.8rem;
+    color: var(--subtext0);
+    white-space: normal;
+    max-width: 28rem;
+    line-height: 1.6;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+    z-index: 100;
+}
+
+.haiku-tooltip.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.haiku-tooltip-row {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.haiku-tooltip-label {
+    color: var(--accent);
+    flex-shrink: 0;
 }
 
 .quote-widget .widget-text {

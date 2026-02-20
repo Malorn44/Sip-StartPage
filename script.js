@@ -143,6 +143,7 @@ function loadSettings() {
         openWeatherApiKey: '',
         linkBehavior: 'same',
         showKeyboardHints: mobile ? 'false' : 'true',
+        showCredits: 'true',
         density: mobile ? 'compact' : 'comfy',
         iconOnlyMode: 'false',
         headerLeft: 'greeting',
@@ -189,6 +190,7 @@ function loadSettings() {
         openWeatherApiKey: localStorage.getItem('openWeatherApiKey') ??  defaults.openWeatherApiKey,
         linkBehavior: localStorage.getItem('linkBehavior') ?? defaults.linkBehavior,
         showKeyboardHints: localStorage.getItem('showKeyboardHints') ?? defaults.showKeyboardHints,
+        showCredits: localStorage.getItem('showCredits') ?? defaults.showCredits,
         density: localStorage.getItem('density') ?? defaults.density,
         iconOnlyMode: localStorage.getItem('iconOnlyMode') ?? defaults.iconOnlyMode,
         headerLeft: localStorage.getItem('headerLeft') ?? defaults.headerLeft,
@@ -663,7 +665,7 @@ function updateDateTime() {
     let timeString;
 
     if (settings.timeFormat === '12') {
-        const period = hours >= 12 ? 'PM' : 'AM';
+        const period = hours >= 12 ? '午後' : '午前';
         hours = hours % 12 || 12;
         if (settings.showSeconds === 'true') {
             timeString = `${hours}:${minutes}:${seconds} ${period}`;
@@ -680,8 +682,8 @@ function updateDateTime() {
 
     timeElement.textContent = timeString;
 
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    dateElement.textContent = now.toLocaleDateString('en-US', options);
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    dateElement.textContent = now.toLocaleDateString('ja-JP', options);
 
     updateGreeting(now.getHours());
 }
@@ -779,6 +781,7 @@ function renderSearchEngines() {
 
     // Update keyboard hints
     updateKeyboardHints();
+    applyCreditsVisibility();
 }
 
 function updateKeyboardHints() {
@@ -805,6 +808,11 @@ function updateKeyboardHints() {
 }
 
 // ========================================
+function applyCreditsVisibility() {
+    const credits = document.querySelector('.developer-credits');
+    if (credits) credits.style.display = settings.showCredits === 'false' ? 'none' : '';
+}
+
 // Weather Function (OpenWeather API Integration)
 // ========================================
 
@@ -838,7 +846,7 @@ async function fetchWeather(query) {
     try {
         const unit = settings.tempUnit === 'C' ? 'metric' : 'imperial';
         const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?${query}&appid=${settings.openWeatherApiKey}&units=${unit}`
+            `https://api.openweathermap.org/data/2.5/weather?${query}&appid=${settings.openWeatherApiKey}&units=${unit}&lang=ja`
         );
 
         if (!response.ok) {
@@ -850,7 +858,7 @@ async function fetchWeather(query) {
 
         // Get temperature, condition, and icon info
         const temp = Math.round(data.main.temp);
-        const condition = data.weather[0].main; // e.g., "Clouds"
+        const condition = data.weather[0].description;
         const iconCode = data.weather[0].icon;
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
@@ -931,7 +939,7 @@ async function fetchForecast(query) {
     try {
         const unit = settings.tempUnit === 'C' ? 'metric' : 'imperial';
         const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?${query}&appid=${settings.openWeatherApiKey}&units=${unit}&cnt=40`
+            `https://api.openweathermap.org/data/2.5/forecast?${query}&appid=${settings.openWeatherApiKey}&units=${unit}&cnt=40&lang=ja`
         );
 
         if (!response.ok) {
@@ -958,7 +966,7 @@ async function fetchForecast(query) {
                     temp: Math.round(item.main.temp),
                     tempMax: Math.round(item.main.temp_max),
                     tempMin: Math.round(item.main.temp_min),
-                    condition: item.weather[0].main,
+                    condition: item.weather[0].description,
                     icon: item.weather[0].icon
                 });
 
@@ -1026,6 +1034,7 @@ function renderForecastWidget(forecasts, unit, isMock = false) {
 
     const tempUnit = unit === 'metric' ? '°C' : '°F';
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const jDayNames = ['日', '月', '火', '水', '木', '金', '土'];
 
     const forecastHTML = forecasts.map((forecast, index) => {
         let dayName;
@@ -1035,6 +1044,8 @@ function renderForecastWidget(forecasts, unit, isMock = false) {
             // Fallback if no date (starting from tomorrow)
             dayName = dayNames[(new Date().getDay() + index + 1) % 7];
         }
+
+        dayName = jDayNames[dayNames.indexOf(dayName)];
 
         let iconHTML;
         if (isMock) {
@@ -1125,13 +1136,37 @@ function updateQuote() {
     }
 }
 
+function getCurrentSeason() {
+    const month = new Date().getMonth(); // 0-indexed
+    if (month >= 2 && month <= 4) return '春';
+    if (month >= 5 && month <= 7) return '夏';
+    if (month >= 8 && month <= 10) return '秋';
+    return '冬';
+}
+
 function updateHaiku() {
     if (!haikuElement) return;
     const source = settings.haiku || haikuData;
     if (source && source.length > 0) {
-        const haiku = source[Math.floor(Math.random() * source.length)];
+        const season = getCurrentSeason();
+        const pool = source.filter(h => !h.kigo_season || h.kigo_season === season);
+        const haiku = (pool.length > 0 ? pool : source)[Math.floor(Math.random() * (pool.length > 0 ? pool : source).length)];
         haikuElement.innerHTML = buildHaikuHTML(haiku.text, haiku.furigana);
         if (haikuAuthorElement) haikuAuthorElement.textContent = '— ' + haiku.author;
+
+        const tooltip = document.getElementById('haiku-tooltip');
+        if (tooltip) {
+            const rows = [];
+            if (haiku.kigo) {
+                const season = haiku.kigo_season ? `（${haiku.kigo_season}）` : '';
+                rows.push(`<div class="haiku-tooltip-row"><span class="haiku-tooltip-label">季語</span><span>${haiku.kigo}${season}</span></div>`);
+            }
+            if (haiku.meaning) {
+                rows.push(`<div class="haiku-tooltip-row"><span class="haiku-tooltip-label">意味</span><span>${haiku.meaning}</span></div>`);
+            }
+            tooltip.innerHTML = rows.join('');
+            tooltip.style.display = rows.length ? '' : 'none';
+        }
     }
 }
 
@@ -1351,7 +1386,25 @@ function createFooterWidget(type) {
             <span class="widget-icon"><i class="fa-solid fa-feather"></i></span>
             <span class="widget-text" id="haiku"></span>
             <span class="quote-author" id="haiku-author"></span>
+            <div class="haiku-tooltip" id="haiku-tooltip"></div>
         `;
+        const tooltip = widget.querySelector('.haiku-tooltip');
+        let hideTimer;
+
+        widget.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimer);
+            if (tooltip) tooltip.classList.add('visible');
+        });
+        widget.addEventListener('mouseleave', () => {
+            hideTimer = setTimeout(() => {
+                if (tooltip) tooltip.classList.remove('visible');
+            }, 100);
+        });
+        if (tooltip) {
+            tooltip.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+            tooltip.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+        }
+
         setTimeout(() => {
             haikuElement = document.getElementById('haiku');
             haikuAuthorElement = document.getElementById('haiku-author');
@@ -1548,6 +1601,8 @@ function initSettings() {
                 renderLinksGrid();
             } else if (setting === 'showKeyboardHints') {
                 updateKeyboardHints();
+            } else if (setting === 'showCredits') {
+                applyCreditsVisibility();
             } else if (setting === 'showSearchBar') {
                 applySearchVisibility();
             } else if (setting === 'headerLeft' || setting === 'headerRight') {
@@ -2405,11 +2460,10 @@ function renderHaikuSettings() {
             <div class="haiku-fields">
                 <div class="haiku-field-row">
                     <span class="haiku-field-label">俳句</span>
-                    <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
-                </div>
-                <div class="haiku-field-row">
-                    <span class="haiku-field-label">ふりがな</span>
-                    <input class="haiku-input" data-index="${index}" data-field="furigana" placeholder="ふるいけや　かはずとびこむ　みずのおと" value="${h.furigana || ''}">
+                    <div class="haiku-text-group">
+                        <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
+                        <input class="haiku-input haiku-furigana" data-index="${index}" data-field="furigana" placeholder="ふりがな" value="${h.furigana || ''}">
+                    </div>
                 </div>
                 <div class="haiku-field-row haiku-inline-row">
                     <span class="haiku-field-label">作者</span>
@@ -2421,6 +2475,10 @@ function renderHaikuSettings() {
                         <option value="">—</option>
                         ${seasons.map(s => `<option value="${s}" ${h.kigo_season === s ? 'selected' : ''}>${s}</option>`).join('')}
                     </select>
+                </div>
+                <div class="haiku-field-row">
+                    <span class="haiku-field-label">意味</span>
+                    <textarea class="haiku-input haiku-meaning" data-index="${index}" data-field="meaning" placeholder="俳句の意味" rows="2">${h.meaning || ''}</textarea>
                 </div>
             </div>
             <button class="delete-btn" data-index="${index}" title="Delete Haiku" ${list.length <= 1 ? 'disabled' : ''}>
@@ -2438,7 +2496,7 @@ function renderHaikuSettings() {
         updateHaiku();
     }
 
-    container.querySelectorAll('input[data-field]').forEach(el => el.addEventListener('input', saveField));
+    container.querySelectorAll('input[data-field], textarea[data-field]').forEach(el => el.addEventListener('input', saveField));
     container.querySelectorAll('select[data-field]').forEach(el => el.addEventListener('change', saveField));
 
     container.querySelectorAll('.delete-btn').forEach(btn => {
