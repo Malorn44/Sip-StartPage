@@ -1484,7 +1484,7 @@ body {
 /* Category & Link Management */
 .categories-list,
 .links-list,
-#quotes-list {
+#quotes-list, #haiku-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
@@ -1579,6 +1579,83 @@ body {
 }
 
 .quote-input:focus {
+    border-color: var(--primary);
+}
+
+.haiku-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--surface0);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+}
+
+.haiku-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.haiku-field-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.haiku-field-label {
+    font-size: 0.78rem;
+    color: var(--subtext1);
+    min-width: 4rem;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.haiku-input {
+    flex: 1;
+    padding: var(--spacing-sm);
+    background: var(--mantle);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    min-width: 0;
+}
+
+.haiku-input:focus {
+    border-color: var(--primary);
+}
+
+.haiku-inline-row .haiku-field-label {
+    min-width: auto;
+}
+
+.haiku-inline-row .haiku-field-label:first-child {
+    min-width: 4rem;
+}
+
+.haiku-input-short {
+    flex: 0 0 8rem;
+    min-width: 0;
+}
+
+.haiku-season-select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--mantle);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.haiku-season-select:focus {
     border-color: var(--primary);
 }
 

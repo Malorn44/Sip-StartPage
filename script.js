@@ -302,6 +302,7 @@ function loadSettings() {
         socialLinks: JSON.parse(localStorage.getItem('socialLinks')) ?? defaults.socialLinks,
         locale: localStorage.getItem('locale') ?? defaults.locale,
         quotes: JSON.parse(localStorage.getItem('quotes')) ?? defaults.quotes,
+        haiku: JSON.parse(localStorage.getItem('haiku')) ?? null,
         customColors: JSON.parse(localStorage.getItem('customColors') || JSON.stringify(defaults.customColors)),
         backgroundImage: localStorage.getItem('backgroundImage') || null,
         backgroundSize: localStorage.getItem('backgroundSize') || 'cover',
@@ -774,7 +775,8 @@ function updateBackgroundImageUI() {
 // DOM Elements
 // ========================================
 
-let searchInput, timeElement, dateElement, greetingElement, weatherElement, quoteElement, linksGrid;
+let searchInput, timeElement, dateElement, greetingElement, weatherElement, quoteElement, haikuElement, haikuAuthorElement, linksGrid;
+let haikuData = null;
 
 // ========================================
 // Time & Date Functions
@@ -1277,7 +1279,51 @@ function renderForecastWidget(forecasts, isMock = false) {
 // Quotes Function
 // ========================================
 
-// Remove the hardcoded quotes array - now using settings.quotes
+function isKanji(ch) {
+    const code = ch.charCodeAt(0);
+    return (code >= 0x4E00 && code <= 0x9FAF) || (code >= 0x3400 && code <= 0x4DBF);
+}
+
+function alignFurigana(text, reading) {
+    const result = [];
+    let t = 0, r = 0;
+    while (t < text.length) {
+        if (isKanji(text[t])) {
+            const kStart = t;
+            while (t < text.length && isKanji(text[t])) t++;
+            const kanji = text.slice(kStart, t);
+            let kanjiReading;
+            if (t < text.length) {
+                const rEnd = reading.indexOf(text[t], r);
+                kanjiReading = rEnd === -1 ? reading.slice(r) : reading.slice(r, rEnd);
+                r = rEnd === -1 ? reading.length : rEnd;
+            } else {
+                kanjiReading = reading.slice(r);
+                r = reading.length;
+            }
+            result.push({ kanji, reading: kanjiReading });
+        } else {
+            result.push({ text: text[t] });
+            t++;
+            r++;
+        }
+    }
+    return result;
+}
+
+function buildHaikuHTML(text, furigana) {
+    if (!furigana) return text;
+    const textParts = text.split('\u3000');
+    const furiParts = furigana.split('\u3000');
+    if (textParts.length !== furiParts.length) return text;
+    return textParts.map((part, i) => {
+        return alignFurigana(part, furiParts[i])
+            .map(item => item.kanji
+                ? `<ruby>${item.kanji}<rt>${item.reading}</rt></ruby>`
+                : item.text)
+            .join('');
+    }).join('\u3000');
+}
 
 function updateQuote() {
     const quoteWidget = document.querySelector('.quote-widget');
@@ -1293,6 +1339,16 @@ function updateQuote() {
         }
     } else {
         quoteWidget.style.display = 'none';
+    }
+}
+
+function updateHaiku() {
+    if (!haikuElement) return;
+    const source = settings.haiku || haikuData;
+    if (source && source.length > 0) {
+        const haiku = source[Math.floor(Math.random() * source.length)];
+        haikuElement.innerHTML = buildHaikuHTML(haiku.text, haiku.furigana);
+        if (haikuAuthorElement) haikuAuthorElement.textContent = '— ' + haiku.author;
     }
 }
 
@@ -1496,16 +1552,31 @@ function createFooterWidget(type) {
         widget.className = 'widget quote-widget';
         widget.innerHTML = `
             <span class="widget-icon"><i class="fa-solid fa-quote-left"></i></span>
-            <span class="widget-text" id="quote">"The only way to do great work is to love what you do."</span>
+            <span class="widget-text" id="quote"></span>
         `;
-        // Reassign quoteElement
         setTimeout(() => {
             quoteElement = document.getElementById('quote');
             updateQuote();
         }, 0);
         return widget;
     }
-    
+
+    if (type === 'haiku') {
+        const widget = document.createElement('div');
+        widget.className = 'widget quote-widget';
+        widget.innerHTML = `
+            <span class="widget-icon"><i class="fa-solid fa-feather"></i></span>
+            <span class="widget-text" id="haiku"></span>
+            <span class="quote-author" id="haiku-author"></span>
+        `;
+        setTimeout(() => {
+            haikuElement = document.getElementById('haiku');
+            haikuAuthorElement = document.getElementById('haiku-author');
+            updateHaiku();
+        }, 0);
+        return widget;
+    }
+
     if (type === 'socials') {
         return renderSocialLinks();
     }
@@ -1656,6 +1727,7 @@ function initSettings() {
                 renderGreetingSettings();
                 renderSocialLinksSettings();
                 renderQuotesSettings();
+                renderHaikuSettings();
             } else if (tabId === 'help') {
                 // Help tab - content is static in HTML
             }
@@ -1951,7 +2023,20 @@ function initSettings() {
             }
         });
     }
-    
+
+    // Add haiku button
+    const addHaikuBtn = document.getElementById('add-haiku-btn');
+    if (addHaikuBtn) {
+        addHaikuBtn.addEventListener('click', () => {
+            if (!settings.haiku) settings.haiku = [];
+            if (settings.haiku.length < 50) {
+                settings.haiku.push({ text: '', furigana: '', author: '' });
+                saveSettings('haiku', settings.haiku);
+                renderHaikuSettings();
+            }
+        });
+    }
+
     // Category selector for links
     const linkCategorySelect = document.getElementById('link-category-select');
     if (linkCategorySelect) {
@@ -2601,6 +2686,86 @@ function renderQuotesSettings() {
 }
 
 // ========================================
+// Haiku Management
+// ========================================
+
+function renderHaikuSettings() {
+    const container = document.getElementById('haiku-list');
+    const addBtn = document.getElementById('add-haiku-btn');
+    if (!container) return;
+
+    // Seed from haiku.json on first use
+    if (!settings.haiku && haikuData) {
+        settings.haiku = haikuData.map(h => ({ ...h }));
+        saveSettings('haiku', settings.haiku);
+    }
+
+    const list = settings.haiku || [];
+    const seasons = ['春', '夏', '秋', '冬'];
+
+    container.innerHTML = list.map((h, index) => `
+        <div class="haiku-item" data-index="${index}">
+            <div class="haiku-fields">
+                <div class="haiku-field-row">
+                    <span class="haiku-field-label">俳句</span>
+                    <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
+                </div>
+                <div class="haiku-field-row">
+                    <span class="haiku-field-label">ふりがな</span>
+                    <input class="haiku-input" data-index="${index}" data-field="furigana" placeholder="ふるいけや　かはずとびこむ　みずのおと" value="${h.furigana || ''}">
+                </div>
+                <div class="haiku-field-row haiku-inline-row">
+                    <span class="haiku-field-label">作者</span>
+                    <input class="haiku-input" data-index="${index}" data-field="author" placeholder="松尾芭蕉" value="${h.author || ''}">
+                    <span class="haiku-field-label">季語</span>
+                    <input class="haiku-input haiku-input-short" data-index="${index}" data-field="kigo" placeholder="蛙" value="${h.kigo || ''}">
+                    <span class="haiku-field-label">季節</span>
+                    <select class="haiku-season-select" data-index="${index}" data-field="kigo_season">
+                        <option value="">—</option>
+                        ${seasons.map(s => `<option value="${s}" ${h.kigo_season === s ? 'selected' : ''}>${s}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+            <button class="delete-btn" data-index="${index}" title="Delete Haiku" ${list.length <= 1 ? 'disabled' : ''}>
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `).join('');
+
+    if (addBtn) addBtn.disabled = list.length >= 50;
+
+    function saveField(e) {
+        const index = parseInt(e.target.dataset.index);
+        settings.haiku[index][e.target.dataset.field] = e.target.value;
+        saveSettings('haiku', settings.haiku);
+        updateHaiku();
+    }
+
+    container.querySelectorAll('input[data-field]').forEach(el => el.addEventListener('input', saveField));
+    container.querySelectorAll('select[data-field]').forEach(el => el.addEventListener('change', saveField));
+
+    container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.closest('[data-index]').dataset.index);
+            if (settings.haiku.length > 1) {
+                settings.haiku.splice(index, 1);
+                saveSettings('haiku', settings.haiku);
+                renderHaikuSettings();
+                updateHaiku();
+            }
+        });
+    });
+}
+
+function updateFooterSectionVisibility() {
+    const active = [settings.footerLeft, settings.footerCenter, settings.footerRight];
+    const quotesSection = document.getElementById('quotes-settings-section');
+    const haikuSection = document.getElementById('haiku-settings-section');
+    if (quotesSection) quotesSection.style.display = active.includes('quotes') ? '' : 'none';
+    if (haikuSection) haikuSection.style.display = active.includes('haiku') ? '' : 'none';
+}
+
+// ========================================
 // Header Settings Management
 // ========================================
 
@@ -2676,6 +2841,7 @@ function renderFooterSettings() {
         footerLeftSelect.addEventListener('change', (e) => {
             saveSettings('footerLeft', e.target.value);
             updateFooter();
+            updateFooterSectionVisibility();
         });
     }
 
@@ -2684,6 +2850,7 @@ function renderFooterSettings() {
         footerCenterSelect.addEventListener('change', (e) => {
             saveSettings('footerCenter', e.target.value);
             updateFooter();
+            updateFooterSectionVisibility();
         });
     }
 
@@ -2692,9 +2859,11 @@ function renderFooterSettings() {
         footerRightSelect.addEventListener('change', (e) => {
             saveSettings('footerRight', e.target.value);
             updateFooter();
+            updateFooterSectionVisibility();
         });
     }
 
+    updateFooterSectionVisibility();
 }
 
 // ========================================
@@ -2842,10 +3011,7 @@ function init() {
     // Update weather
     updateWeather();
     setInterval(updateWeather, 600000);
-    
-    // Set random quote
-    updateQuote();
-    
+
     // Update header and footer layout
     updateHeader();
     updateFooter();
