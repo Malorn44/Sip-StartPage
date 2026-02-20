@@ -1239,6 +1239,8 @@ function renderForecastWidget(forecasts, isMock = false) {
         const date = forecast.date ?? new Date(Date.now() + (index + 1) * 24 * 60 * 60 * 1000);
         const dayName = new Intl.DateTimeFormat(settings.locale, { weekday: 'short' }).format(date);
 
+        dayName = jDayNames[dayNames.indexOf(dayName)];
+
         let iconHTML;
         if (isMock) {
             iconHTML = `<i class="fa-solid ${forecast.icon}"></i>`;
@@ -1342,13 +1344,37 @@ function updateQuote() {
     }
 }
 
+function getCurrentSeason() {
+    const month = new Date().getMonth(); // 0-indexed
+    if (month >= 2 && month <= 4) return '春';
+    if (month >= 5 && month <= 7) return '夏';
+    if (month >= 8 && month <= 10) return '秋';
+    return '冬';
+}
+
 function updateHaiku() {
     if (!haikuElement) return;
     const source = settings.haiku || haikuData;
     if (source && source.length > 0) {
-        const haiku = source[Math.floor(Math.random() * source.length)];
+        const season = getCurrentSeason();
+        const pool = source.filter(h => !h.kigo_season || h.kigo_season === season);
+        const haiku = (pool.length > 0 ? pool : source)[Math.floor(Math.random() * (pool.length > 0 ? pool : source).length)];
         haikuElement.innerHTML = buildHaikuHTML(haiku.text, haiku.furigana);
         if (haikuAuthorElement) haikuAuthorElement.textContent = '— ' + haiku.author;
+
+        const tooltip = document.getElementById('haiku-tooltip');
+        if (tooltip) {
+            const rows = [];
+            if (haiku.kigo) {
+                const season = haiku.kigo_season ? `（${haiku.kigo_season}）` : '';
+                rows.push(`<div class="haiku-tooltip-row"><span class="haiku-tooltip-label">季語</span><span>${haiku.kigo}${season}</span></div>`);
+            }
+            if (haiku.meaning) {
+                rows.push(`<div class="haiku-tooltip-row"><span class="haiku-tooltip-label">意味</span><span>${haiku.meaning}</span></div>`);
+            }
+            tooltip.innerHTML = rows.join('');
+            tooltip.style.display = rows.length ? '' : 'none';
+        }
     }
 }
 
@@ -1568,7 +1594,25 @@ function createFooterWidget(type) {
             <span class="widget-icon"><i class="fa-solid fa-feather"></i></span>
             <span class="widget-text" id="haiku"></span>
             <span class="quote-author" id="haiku-author"></span>
+            <div class="haiku-tooltip" id="haiku-tooltip"></div>
         `;
+        const tooltip = widget.querySelector('.haiku-tooltip');
+        let hideTimer;
+
+        widget.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimer);
+            if (tooltip) tooltip.classList.add('visible');
+        });
+        widget.addEventListener('mouseleave', () => {
+            hideTimer = setTimeout(() => {
+                if (tooltip) tooltip.classList.remove('visible');
+            }, 100);
+        });
+        if (tooltip) {
+            tooltip.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+            tooltip.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+        }
+
         setTimeout(() => {
             haikuElement = document.getElementById('haiku');
             haikuAuthorElement = document.getElementById('haiku-author');
@@ -2708,11 +2752,10 @@ function renderHaikuSettings() {
             <div class="haiku-fields">
                 <div class="haiku-field-row">
                     <span class="haiku-field-label">俳句</span>
-                    <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
-                </div>
-                <div class="haiku-field-row">
-                    <span class="haiku-field-label">ふりがな</span>
-                    <input class="haiku-input" data-index="${index}" data-field="furigana" placeholder="ふるいけや　かはずとびこむ　みずのおと" value="${h.furigana || ''}">
+                    <div class="haiku-text-group">
+                        <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
+                        <input class="haiku-input haiku-furigana" data-index="${index}" data-field="furigana" placeholder="ふりがな" value="${h.furigana || ''}">
+                    </div>
                 </div>
                 <div class="haiku-field-row haiku-inline-row">
                     <span class="haiku-field-label">作者</span>
@@ -2724,6 +2767,10 @@ function renderHaikuSettings() {
                         <option value="">—</option>
                         ${seasons.map(s => `<option value="${s}" ${h.kigo_season === s ? 'selected' : ''}>${s}</option>`).join('')}
                     </select>
+                </div>
+                <div class="haiku-field-row">
+                    <span class="haiku-field-label">意味</span>
+                    <textarea class="haiku-input haiku-meaning" data-index="${index}" data-field="meaning" placeholder="俳句の意味" rows="2">${h.meaning || ''}</textarea>
                 </div>
             </div>
             <button class="delete-btn" data-index="${index}" title="Delete Haiku" ${list.length <= 1 ? 'disabled' : ''}>
@@ -2741,7 +2788,7 @@ function renderHaikuSettings() {
         updateHaiku();
     }
 
-    container.querySelectorAll('input[data-field]').forEach(el => el.addEventListener('input', saveField));
+    container.querySelectorAll('input[data-field], textarea[data-field]').forEach(el => el.addEventListener('input', saveField));
     container.querySelectorAll('select[data-field]').forEach(el => el.addEventListener('change', saveField));
 
     container.querySelectorAll('.delete-btn').forEach(btn => {
