@@ -4,11 +4,25 @@ Transform your browser's new tab into a beautiful, personalized workspace with S
 
 ---
 
+## 🎉 UPDATES - February 2026
+
+### 🔧 **Platform Clarification & Bug Fixes** (v1.5.5)
+
+- **Updated documentation** to clarify desktop-only extension support
+- **Content Security Policy fix** for reliable Font Awesome CDN loading
+- **Improved mobile guidance** for accessing Sip as a website
+- All desktop features working perfectly
+
+---
+
 ## 🎉 UPDATES - January 2026
 
-### 📱 **Full Mobile Support** (v1.5.0)
-Sip now works beautifully on mobile devices!
+### 📱 **Full Mobile-Responsive Design** (v1.5.0)
+Sip works beautifully when accessed on mobile devices as a website!
 
+**Note:** The Firefox extension only works on desktop. Mobile users can access Sip via GitHub Pages (see Installation section below).
+
+Mobile features:
 - **Floating Action Button (FAB)** - Settings accessible via a purple gear icon in the bottom-right corner
 - **Touch-Optimized Interface** - All buttons and links meet the 44px minimum touch target size
 - **Responsive Settings Modal** - Full-screen modal on mobile with properly sized inputs that don't overflow
@@ -330,13 +344,29 @@ Each screenshot demonstrates the glassmorphism effects, customizable categories,
 
 ## 🧩 Installation
 
-**Sip** is available as a browser extension:
+### Browser Extension (Desktop Only)
 
+**Sip** is available as a browser extension for desktop/laptop computers:
+
+- **Firefox Add-ons** - [Available now](https://addons.mozilla.org/) (Desktop Firefox only)
 - **Chrome Web Store** - Coming soon!
-- **Firefox Add-ons** - [Available now](https://addons.mozilla.org/) (supports Desktop & Android)
 - **Safari Extension** - [Build & install instructions](SAFARI-QUICKSTART.md)
 
-Once installed from your browser's extension store, Sip will replace your new tab page with a beautiful, customizable workspace.
+Once installed, Sip will automatically replace your new tab page with a beautiful, customizable workspace.
+
+### 📱 Mobile Browsers
+
+**Why not as a mobile extension?**  
+Firefox on phones and tablets doesn't allow extensions to change the new tab page. This is a Firefox limitation to keep mobile browsing fast and battery-efficient.
+
+**Good news!** You can still use Sip on mobile by accessing it as a website:
+
+1. **Fork this repository** on GitHub
+2. **Enable GitHub Pages** in your fork's settings
+3. **Bookmark the page** or set it as your homepage
+4. **Enjoy!** All features work perfectly - the design is fully mobile-responsive
+
+All the beautiful themes, customization options, and touch-optimized interface work great when accessed as a website!
 
 ### Safari Extension
 
