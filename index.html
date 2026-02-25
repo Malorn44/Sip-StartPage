@@ -53,20 +53,20 @@
                     <button class="settings-tab" data-tab="appearance">
                         <i class="fa-solid fa-paintbrush"></i> Appearance
                     </button>
+                    <button class="settings-tab" data-tab="search">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </button>
+                    <button class="settings-tab" data-tab="layout">
+                        <i class="fa-solid fa-table-cells-large"></i> Layout
+                    </button>
+                    <button class="settings-tab" data-tab="widgets">
+                        <i class="fa-solid fa-puzzle-piece"></i> Widgets
+                    </button>
                     <button class="settings-tab" data-tab="categories">
                         <i class="fa-solid fa-folder"></i> Categories
                     </button>
                     <button class="settings-tab" data-tab="links">
                         <i class="fa-solid fa-link"></i> Links
-                    </button>
-                    <button class="settings-tab" data-tab="social">
-                        <i class="fa-solid fa-share-nodes"></i> Social
-                    </button>
-                    <button class="settings-tab" data-tab="header">
-                        <i class="fa-solid fa-arrow-up"></i> Header
-                    </button>
-                    <button class="settings-tab" data-tab="footer">
-                        <i class="fa-solid fa-align-justify"></i> Footer
                     </button>
                     <button class="settings-tab" data-tab="help">
                         <i class="fa-solid fa-circle-question"></i> Help
@@ -108,17 +108,6 @@
 
                         <div class="setting-item">
                             <div class="setting-label">
-                                <i class="fa-solid fa-temperature-half"></i>
-                                <span>Temperature</span>
-                            </div>
-                            <div class="setting-toggle">
-                                <button class="toggle-btn" data-setting="tempUnit" data-value="F">°F</button>
-                                <button class="toggle-btn" data-setting="tempUnit" data-value="C">°C</button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-label">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 <span>Open Links In</span>
                             </div>
@@ -142,134 +131,23 @@
 
                         <div class="setting-item">
                             <div class="setting-label">
+                                <i class="fa-solid fa-keyboard"></i>
+                                <span>Shortcuts Position</span>
+                            </div>
+                            <div class="setting-toggle">
+                                <button class="toggle-btn" data-setting="keyboardHintsPosition" data-value="above"><i class="fa-solid fa-arrow-up"></i> Above Footer</button>
+                                <button class="toggle-btn" data-setting="keyboardHintsPosition" data-value="below"><i class="fa-solid fa-arrow-down"></i> Below Footer</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
                                 <i class="fa-solid fa-copyright"></i>
                                 <span>Developer Credits</span>
                             </div>
                             <div class="setting-toggle">
                                 <button class="toggle-btn" data-setting="showCredits" data-value="true"><i class="fa-solid fa-eye"></i> Show</button>
                                 <button class="toggle-btn" data-setting="showCredits" data-value="false"><i class="fa-solid fa-eye-slash"></i> Hide</button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-compress"></i>
-                                <span>Layout Density</span>
-                            </div>
-                            <div class="setting-toggle">
-                                <button class="toggle-btn" data-setting="density" data-value="comfy"><i class="fa-solid fa-arrows-left-right"></i> Comfy</button>
-                                <button class="toggle-btn" data-setting="density" data-value="compact"><i class="fa-solid fa-compress-arrows-alt"></i> Compact</button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item hide-on-desktop">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-mobile-screen"></i>
-                                <span>Mobile Icon Mode</span>
-                            </div>
-                            <div class="setting-toggle">
-                                <button class="toggle-btn" data-setting="iconOnlyMode" data-value="false"><i class="fa-solid fa-tag"></i> With Labels</button>
-                                <button class="toggle-btn" data-setting="iconOnlyMode" data-value="true"><i class="fa-solid fa-icons"></i> Icons Only</button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <span>Search Bar</span>
-                            </div>
-                            <div class="setting-toggle">
-                                <button class="toggle-btn" data-setting="showSearchBar" data-value="true"><i class="fa-solid fa-eye"></i> Show</button>
-                                <button class="toggle-btn" data-setting="showSearchBar" data-value="false"><i class="fa-solid fa-eye-slash"></i> Hide</button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-table-columns"></i>
-                                <span>Preferred Columns</span>
-                            </div>
-                            <select id="setting-preferred-columns" class="setting-select">
-                                <option value="auto">Auto</option>
-                                <option value="1">1 Column</option>
-                                <option value="2">2 Columns</option>
-                                <option value="3">3 Columns</option>
-                                <option value="4">4 Columns</option>
-                            </select>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-map-marker-alt"></i>
-                                <span>Weather Location</span>
-                            </div>
-                            <input type="text" id="setting-weather-location" class="setting-input" placeholder="Chicago,IL,US">
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-key"></i>
-                                <span>OpenWeather API Key (<a href="https://openweathermap.org" target="_blank">openweathermap.org</a>)</span>
-                            </div>
-                            <input type="text" id="setting-weather-api-key" class="setting-input" placeholder="Enter key">
-                        </div>
-
-                        <div class="setting-item setting-item-vertical">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <span>Search Engines</span>
-                            </div>
-                            <div class="search-engine-grid" id="search-engine-options">
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="google" checked>
-                                    <span class="engine-icon"><i class="fa-brands fa-google"></i></span>
-                                    <span>Google</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="duckduckgo" checked>
-                                    <span class="engine-icon"><span class="nf-icon">󰇥</span></span>
-                                    <span>DuckDuckGo</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="github" checked>
-                                    <span class="engine-icon"><i class="fa-brands fa-github"></i></span>
-                                    <span>GitHub</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="git" checked>
-                                    <span class="engine-icon"><i class="fa-brands fa-git-alt"></i></span>
-                                    <span>Git</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="youtube" checked>
-                                    <span class="engine-icon"><i class="fa-brands fa-youtube"></i></span>
-                                    <span>YouTube</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="bing">
-                                    <span class="engine-icon"><i class="fa-brands fa-microsoft"></i></span>
-                                    <span>Bing</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="amazon">
-                                    <span class="engine-icon"><i class="fa-brands fa-amazon"></i></span>
-                                    <span>Amazon</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="wikipedia">
-                                    <span class="engine-icon"><i class="fa-brands fa-wikipedia-w"></i></span>
-                                    <span>Wikipedia</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="archive">
-                                    <span class="engine-icon"><i class="fa-solid fa-box-archive"></i></span>
-                                    <span>Internet Archive</span>
-                                </label>
-                                <label class="engine-checkbox">
-                                    <input type="checkbox" data-engine="kagi">
-                                    <span class="engine-icon"><i class="fa-brands fa-kaggle"></i></span>
-                                    <span>Kagi</span>
-                                </label>
                             </div>
                         </div>
 
@@ -404,6 +282,50 @@
 
                         <div class="setting-item">
                             <div class="setting-label">
+                                <i class="fa-solid fa-font"></i>
+                                <span>Font</span>
+                            </div>
+                            <select id="setting-font" class="setting-select"></select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-compress"></i>
+                                <span>Layout Density</span>
+                            </div>
+                            <div class="setting-toggle">
+                                <button class="toggle-btn" data-setting="density" data-value="comfy"><i class="fa-solid fa-arrows-left-right"></i> Comfy</button>
+                                <button class="toggle-btn" data-setting="density" data-value="compact"><i class="fa-solid fa-compress-arrows-alt"></i> Compact</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item hide-on-desktop">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-mobile-screen"></i>
+                                <span>Mobile Icon Mode</span>
+                            </div>
+                            <div class="setting-toggle">
+                                <button class="toggle-btn" data-setting="iconOnlyMode" data-value="false"><i class="fa-solid fa-tag"></i> With Labels</button>
+                                <button class="toggle-btn" data-setting="iconOnlyMode" data-value="true"><i class="fa-solid fa-icons"></i> Icons Only</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-table-columns"></i>
+                                <span>Preferred Columns</span>
+                            </div>
+                            <select id="setting-preferred-columns" class="setting-select">
+                                <option value="auto">Auto</option>
+                                <option value="1">1 Column</option>
+                                <option value="2">2 Columns</option>
+                                <option value="3">3 Columns</option>
+                                <option value="4">4 Columns</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
                                 <i class="fa-solid fa-image"></i>
                                 <span>Background Image</span>
                             </div>
@@ -481,62 +403,128 @@
                         </button>
                     </div>
 
-                    <!-- Social Links Tab -->
-                    <div class="settings-panel" data-panel="social">
-                        <p class="panel-description">Configure your social media links to display in the footer.</p>
-                        <div class="social-links-list" id="social-links-list">
-                            <!-- Social links will be populated dynamically -->
+                    <!-- Search Tab -->
+                    <div class="settings-panel" data-panel="search">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <span>Search Bar</span>
+                            </div>
+                            <div class="setting-toggle">
+                                <button class="toggle-btn" data-setting="showSearchBar" data-value="true"><i class="fa-solid fa-eye"></i> Show</button>
+                                <button class="toggle-btn" data-setting="showSearchBar" data-value="false"><i class="fa-solid fa-eye-slash"></i> Hide</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item setting-item-vertical">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Search Engines</span>
+                            </div>
+                            <div class="search-engine-grid" id="search-engine-options">
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="google" checked>
+                                    <span class="engine-icon"><i class="fa-brands fa-google"></i></span>
+                                    <span>Google</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="duckduckgo" checked>
+                                    <span class="engine-icon"><span class="nf-icon">󰇥</span></span>
+                                    <span>DuckDuckGo</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="github" checked>
+                                    <span class="engine-icon"><i class="fa-brands fa-github"></i></span>
+                                    <span>GitHub</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="git" checked>
+                                    <span class="engine-icon"><i class="fa-brands fa-git-alt"></i></span>
+                                    <span>Git</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="youtube" checked>
+                                    <span class="engine-icon"><i class="fa-brands fa-youtube"></i></span>
+                                    <span>YouTube</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="bing">
+                                    <span class="engine-icon"><i class="fa-brands fa-microsoft"></i></span>
+                                    <span>Bing</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="amazon">
+                                    <span class="engine-icon"><i class="fa-brands fa-amazon"></i></span>
+                                    <span>Amazon</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="wikipedia">
+                                    <span class="engine-icon"><i class="fa-brands fa-wikipedia-w"></i></span>
+                                    <span>Wikipedia</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="archive">
+                                    <span class="engine-icon"><i class="fa-solid fa-box-archive"></i></span>
+                                    <span>Internet Archive</span>
+                                </label>
+                                <label class="engine-checkbox">
+                                    <input type="checkbox" data-engine="kagi">
+                                    <span class="engine-icon"><i class="fa-brands fa-kaggle"></i></span>
+                                    <span>Kagi</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Header Tab -->
-                    <div class="settings-panel" data-panel="header">
-                        <p class="panel-description">Customize the header layout by selecting what to display in each section.</p>
+                    <!-- Layout Tab -->
+                    <div class="settings-panel" data-panel="layout">
+                        <div class="settings-section-label">
+                            Header
+                        </div>
 
                         <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fa-solid fa-align-left"></i>
-                                <span>Left Widget</span>
+                                <span>Left</span>
                             </div>
                             <select id="header-left-select" class="setting-select" data-setting="headerLeft">
+                                <option value="blank">Blank</option>
                                 <option value="greeting">Greeting</option>
                                 <option value="time-date">Time & Date</option>
-                                <option value="blank">Blank</option>
                             </select>
                         </div>
 
                         <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fa-solid fa-align-right"></i>
-                                <span>Right Widget</span>
+                                <span>Right</span>
                             </div>
                             <select id="header-right-select" class="setting-select" data-setting="headerRight">
+                                <option value="blank">Blank</option>
                                 <option value="greeting">Greeting</option>
                                 <option value="time-date">Time & Date</option>
-                                <option value="blank">Blank</option>
                             </select>
                         </div>
-                    </div>
 
-                    <!-- Footer Tab -->
-                    <div class="settings-panel" data-panel="footer">
-                        <p class="panel-description">Customize the footer layout by selecting what to display in each section.</p>
+                        <div class="settings-section-label">
+                            Footer
+                        </div>
 
                         <div class="setting-item">
                             <div class="setting-label">
-                                <i class="fa-solid fa-arrow-down-to-line"></i>
+                                <i class="fa-solid fa-thumbtack"></i>
                                 <span>Pin to Bottom</span>
                             </div>
                             <div class="setting-toggle">
-                                <button class="toggle-btn" data-setting="footerPinBottom" data-value="true"><i class="fa-solid fa-thumbtack"></i> Pinned</button>
-                                <button class="toggle-btn" data-setting="footerPinBottom" data-value="false"><i class="fa-solid fa-thumbtack-slash"></i> Unpinned</button>
+                                <button class="toggle-btn" data-setting="footerPinBottom" data-value="true"><i class="fa-solid"></i>Yes</button>
+                                <button class="toggle-btn" data-setting="footerPinBottom" data-value="false"><i class="fa-solid"></i>No</button>
                             </div>
                         </div>
 
                         <div class="setting-item hide-on-mobile">
                             <div class="setting-label">
                                 <i class="fa-solid fa-align-left"></i>
-                                <span>Left Section</span>
+                                <span>Left</span>
                             </div>
                             <select id="footer-left-select" class="setting-select">
                                 <option value="blank">Blank</option>
@@ -551,7 +539,7 @@
                         <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fa-solid fa-align-center"></i>
-                                <span>Center Section</span>
+                                <span>Center</span>
                             </div>
                             <select id="footer-center-select" class="setting-select">
                                 <option value="blank">Blank</option>
@@ -566,7 +554,7 @@
                         <div class="setting-item hide-on-mobile">
                             <div class="setting-label">
                                 <i class="fa-solid fa-align-right"></i>
-                                <span>Right Section</span>
+                                <span>Right</span>
                             </div>
                             <select id="footer-right-select" class="setting-select">
                                 <option value="blank">Blank</option>
@@ -577,28 +565,73 @@
                                 <option value="haiku">Haiku</option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Widgets Tab -->
+                    <div class="settings-panel" data-panel="widgets">
+                        <div class="settings-section-label">
+                            <i class="fa-solid fa-cloud-sun"></i> Weather
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-map-marker-alt"></i>
+                                <span>Weather Location</span>
+                            </div>
+                            <input type="text" id="setting-weather-location" class="setting-input" placeholder="Chicago,IL,US">
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-key"></i>
+                                <div>
+                                    <span>OpenWeather API Key (<a href="https://openweathermap.org" target="_blank">openweathermap.org</a>)</span>
+                                    <p id="weather-api-status" class="setting-description weather-api-status"></p>
+                                </div>
+                            </div>
+                            <input type="text" id="setting-weather-api-key" class="setting-input" placeholder="Enter key">
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fa-solid fa-temperature-half"></i>
+                                <span>Temperature</span>
+                            </div>
+                            <div class="setting-toggle">
+                                <button class="toggle-btn" data-setting="tempUnit" data-value="F">°F</button>
+                                <button class="toggle-btn" data-setting="tempUnit" data-value="C">°C</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-section-label">
+                            <i class="fa-solid fa-quote-left"></i> Quotes
+                        </div>
 
                         <div class="setting-item-vertical" id="quotes-settings-section">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-quote-left"></i>
-                                <span>Custom Quotes</span>
-                            </div>
                             <div id="quotes-list"></div>
                             <button id="add-quote-btn" class="add-btn">
                                 <i class="fa-solid fa-plus"></i> Add Quote
                             </button>
                         </div>
 
+                        <div class="settings-section-label">
+                            <i class="fa-solid fa-feather"></i> Haiku
+                        </div>
+
                         <div class="setting-item-vertical" id="haiku-settings-section">
-                            <div class="setting-label">
-                                <i class="fa-solid fa-feather"></i>
-                                <span>Custom Haiku</span>
-                            </div>
                             <div id="haiku-list"></div>
                             <div id="haiku-stats" class="haiku-stats"></div>
                             <button id="add-haiku-btn" class="add-btn">
                                 <i class="fa-solid fa-plus"></i> Add Haiku
                             </button>
+                        </div>
+
+                        <div class="settings-section-label">
+                            <i class="fa-solid fa-share-nodes"></i> Social Links
+                        </div>
+
+                        <div class="social-links-list" id="social-links-list">
+                            <!-- Social links will be populated dynamically -->
                         </div>
                     </div>
 

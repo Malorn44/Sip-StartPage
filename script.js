@@ -1575,12 +1575,11 @@ function initSettings() {
                 renderCategoriesSettings();
             } else if (tabId === 'links') {
                 renderLinksSettings();
-            } else if (tabId === 'social') {
-                renderSocialLinksSettings();
-            } else if (tabId === 'header') {
+            } else if (tabId === 'layout') {
                 renderHeaderSettings();
-            } else if (tabId === 'footer') {
                 renderFooterSettings();
+            } else if (tabId === 'widgets') {
+                renderSocialLinksSettings();
                 renderQuotesSettings();
                 renderHaikuSettings();
             } else if (tabId === 'help') {
@@ -2556,13 +2555,6 @@ function updateHaikuStats() {
     el.innerHTML = `<span class="haiku-stat-total">${list.length} 俳句</span>${seasonParts}${nashiPart}`;
 }
 
-function updateFooterSectionVisibility() {
-    const active = [settings.footerLeft, settings.footerCenter, settings.footerRight];
-    const quotesSection = document.getElementById('quotes-settings-section');
-    const haikuSection = document.getElementById('haiku-settings-section');
-    if (quotesSection) quotesSection.style.display = active.includes('quotes') ? '' : 'none';
-    if (haikuSection) haikuSection.style.display = active.includes('haiku') ? '' : 'none';
-}
 
 // ========================================
 // Header Settings Management
@@ -2640,7 +2632,6 @@ function renderFooterSettings() {
         footerLeftSelect.addEventListener('change', (e) => {
             saveSettings('footerLeft', e.target.value);
             updateFooter();
-            updateFooterSectionVisibility();
         });
     }
 
@@ -2649,7 +2640,6 @@ function renderFooterSettings() {
         footerCenterSelect.addEventListener('change', (e) => {
             saveSettings('footerCenter', e.target.value);
             updateFooter();
-            updateFooterSectionVisibility();
         });
     }
 
@@ -2658,11 +2648,9 @@ function renderFooterSettings() {
         footerRightSelect.addEventListener('change', (e) => {
             saveSettings('footerRight', e.target.value);
             updateFooter();
-            updateFooterSectionVisibility();
         });
     }
 
-    updateFooterSectionVisibility();
 }
 
 // ========================================
