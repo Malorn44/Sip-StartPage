@@ -1605,7 +1605,7 @@ body {
     color: var(--subtext1);
 }
 
-.haiku-meaning {
+.haiku-meaning, .haiku-explanation {
     resize: vertical;
     line-height: 1.4;
     height: 38px;
