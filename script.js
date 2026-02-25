@@ -152,6 +152,7 @@ function loadSettings() {
         footerCenter: mobile ? 'weather' : 'blank',
         footerRight: mobile ? 'blank' : 'quotes',
         footerPinBottom: 'false',
+        keyboardHintsPosition: 'below',
         socialLinks: [],
         quotes: [
             '"The only way to do great work is to love what you do." - Steve Jobs',
@@ -200,6 +201,7 @@ function loadSettings() {
         footerCenter: localStorage.getItem('footerCenter') ?? defaults.footerCenter,
         footerRight: localStorage.getItem('footerRight') ?? defaults.footerRight,
         footerPinBottom: localStorage.getItem('footerPinBottom') ?? defaults.footerPinBottom,
+    keyboardHintsPosition: localStorage.getItem('keyboardHintsPosition') ?? defaults.keyboardHintsPosition,
         socialLinks: JSON.parse(localStorage.getItem('socialLinks')) ?? defaults.socialLinks,
         quotes: JSON.parse(localStorage.getItem('quotes')) ?? defaults.quotes,
         haiku: JSON.parse(localStorage.getItem('haiku')) ?? null,
@@ -777,6 +779,7 @@ function renderSearchEngines() {
     updateKeyboardHints();
     applyCreditsVisibility();
     applyFooterPinBottom();
+    applyKeyboardHintsPosition();
 }
 
 function updateKeyboardHints() {
@@ -811,6 +814,19 @@ function applyCreditsVisibility() {
 function applyFooterPinBottom() {
     const linksGrid = document.getElementById('links-grid');
     if (linksGrid) linksGrid.classList.toggle('footer-pinned', settings.footerPinBottom === 'true');
+}
+
+function applyKeyboardHintsPosition() {
+    const hints = document.querySelector('.keyboard-hints');
+    const footer = document.querySelector('footer.footer');
+    if (!hints || !footer) return;
+    if (settings.keyboardHintsPosition === 'above') {
+        footer.before(hints);
+        hints.classList.add('hints-above-footer');
+    } else {
+        footer.after(hints);
+        hints.classList.remove('hints-above-footer');
+    }
 }
 
 // Weather Function (OpenWeather API Integration)
@@ -1623,6 +1639,8 @@ function initSettings() {
                 applyCreditsVisibility();
             } else if (setting === 'footerPinBottom') {
                 applyFooterPinBottom();
+            } else if (setting === 'keyboardHintsPosition') {
+                applyKeyboardHintsPosition();
             } else if (setting === 'showSearchBar') {
                 applySearchVisibility();
             } else if (setting === 'headerLeft' || setting === 'headerRight') {
