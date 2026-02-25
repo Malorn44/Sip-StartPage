@@ -299,8 +299,6 @@ function loadSettings() {
         footerCenter: localStorage.getItem('footerCenter') ?? defaults.footerCenter,
         footerRight: localStorage.getItem('footerRight') ?? defaults.footerRight,
         footerPinBottom: localStorage.getItem('footerPinBottom') ?? defaults.footerPinBottom,
-    font: localStorage.getItem('font') ?? defaults.font,
-    keyboardHintsPosition: localStorage.getItem('keyboardHintsPosition') ?? defaults.keyboardHintsPosition,
         socialLinks: JSON.parse(localStorage.getItem('socialLinks')) ?? defaults.socialLinks,
         locale: localStorage.getItem('locale') ?? defaults.locale,
         quotes: JSON.parse(localStorage.getItem('quotes')) ?? defaults.quotes,
@@ -2098,6 +2096,8 @@ function initSettings() {
                 settings.haiku.push({ text: '', furigana: '', author: '' });
                 saveSettings('haiku', settings.haiku);
                 renderHaikuSettings();
+                const list = document.getElementById('haiku-list');
+                if (list) list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         });
     }
@@ -2173,7 +2173,6 @@ function populateSettingsUI() {
     }
 
     // Populate OpenWeather API key input
-
     const apiKeyInput = document.getElementById('setting-weather-api-key');
     if (apiKeyInput) {
         apiKeyInput.value = settings.openWeatherApiKey;
