@@ -659,31 +659,23 @@ function updateDateTime() {
 
     const now = new Date();
 
-    let hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    let timeString;
+    const use12Hour = settings.timeFormat === '12';
+    const showSeconds = settings.showSeconds === 'true';
 
-    if (settings.timeFormat === '12') {
-        const period = hours >= 12 ? '午後' : '午前';
-        hours = hours % 12 || 12;
-        if (settings.showSeconds === 'true') {
-            timeString = `${hours}:${minutes}:${seconds} ${period}`;
-        } else {
-            timeString = `${hours}:${minutes} ${period}`;
-        }
-    } else {
-        if (settings.showSeconds === 'true') {
-            timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
-        } else {
-            timeString = `${hours.toString().padStart(2, '0')}:${minutes}`;
-        }
-    }
+    // TODO: Use browser language or setting override
+    const locale = 'ja-JP';
+
+    const timeString = now.toLocaleTimeString(locale, {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: showSeconds ? '2-digit' : undefined,
+        hour12: use12Hour
+    });
 
     timeElement.textContent = timeString;
 
     const options = { weekday: 'short', month: 'short', day: 'numeric' };
-    dateElement.textContent = now.toLocaleDateString('ja-JP', options);
+    dateElement.textContent = now.toLocaleDateString(locale, options);
 
     updateGreeting(now.getHours());
 }
