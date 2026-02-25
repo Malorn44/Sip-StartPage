@@ -1388,6 +1388,9 @@ function updateHaiku() {
             if (haiku.meaning) {
                 rows.push(`<div class="haiku-tooltip-row"><span class="haiku-tooltip-label">意味</span><span>${haiku.meaning}</span></div>`);
             }
+            if (haiku.explanation) {
+                rows.push(`<div class="haiku-tooltip-row"><span class="haiku-tooltip-label">解説</span><span>${haiku.explanation}</span></div>`);
+            }
             tooltip.innerHTML = rows.join('');
             tooltip.style.display = rows.length ? '' : 'none';
         }
@@ -2766,12 +2769,10 @@ function renderHaikuSettings() {
     container.innerHTML = list.map((h, index) => `
         <div class="haiku-item" data-index="${index}">
             <div class="haiku-fields">
-                <div class="haiku-field-row">
+                <div class="haiku-field-row haiku-inline-row">
                     <span class="haiku-field-label">俳句</span>
-                    <div class="haiku-text-group">
-                        <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
-                        <input class="haiku-input haiku-furigana" data-index="${index}" data-field="furigana" placeholder="ふるいけや　かわずとびこむ　みずのおと" value="${h.furigana || ''}">
-                    </div>
+                    <input class="haiku-input" data-index="${index}" data-field="text" placeholder="古池や　蛙飛び込む　水の音" value="${h.text || ''}">
+                    <input class="haiku-input haiku-furigana" data-index="${index}" data-field="furigana" placeholder="ふるいけや　かわずとびこむ　みずのおと" value="${h.furigana || ''}">
                 </div>
                 <div class="haiku-field-row haiku-inline-row">
                     <span class="haiku-field-label">作者</span>
@@ -2787,6 +2788,10 @@ function renderHaikuSettings() {
                 <div class="haiku-field-row">
                     <span class="haiku-field-label">意味</span>
                     <textarea class="haiku-input haiku-meaning" data-index="${index}" data-field="meaning" placeholder="俳句の意味" rows="2">${h.meaning || ''}</textarea>
+                </div>
+                <div class="haiku-field-row">
+                    <span class="haiku-field-label">解説</span>
+                    <textarea class="haiku-input haiku-explanation" data-index="${index}" data-field="explanation" placeholder="俳句の解説" rows="2">${h.explanation || ''}</textarea>
                 </div>
             </div>
             <button class="delete-btn" data-index="${index}" title="Delete Haiku" ${list.length <= 1 ? 'disabled' : ''}>
