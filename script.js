@@ -152,6 +152,7 @@ function loadSettings() {
         footerCenter: mobile ? 'weather' : 'blank',
         footerRight: mobile ? 'blank' : 'quotes',
         footerPinBottom: 'false',
+        font: 'jetbrains-mono',
         keyboardHintsPosition: 'below',
         socialLinks: [],
         quotes: [
@@ -201,6 +202,7 @@ function loadSettings() {
         footerCenter: localStorage.getItem('footerCenter') ?? defaults.footerCenter,
         footerRight: localStorage.getItem('footerRight') ?? defaults.footerRight,
         footerPinBottom: localStorage.getItem('footerPinBottom') ?? defaults.footerPinBottom,
+    font: localStorage.getItem('font') ?? defaults.font,
     keyboardHintsPosition: localStorage.getItem('keyboardHintsPosition') ?? defaults.keyboardHintsPosition,
         socialLinks: JSON.parse(localStorage.getItem('socialLinks')) ?? defaults.socialLinks,
         quotes: JSON.parse(localStorage.getItem('quotes')) ?? defaults.quotes,
@@ -780,6 +782,7 @@ function renderSearchEngines() {
     applyCreditsVisibility();
     applyFooterPinBottom();
     applyKeyboardHintsPosition();
+    applyFont(settings.font);
 }
 
 function updateKeyboardHints() {
@@ -809,6 +812,20 @@ function updateKeyboardHints() {
 function applyCreditsVisibility() {
     const credits = document.querySelector('.developer-credits');
     if (credits) credits.style.display = settings.showCredits === 'false' ? 'none' : '';
+}
+
+const fontFamilyMap = {
+    'jetbrains-mono': "'JetBrains Mono'",
+    'fira-code': "'Fira Code'",
+    'source-code-pro': "'Source Code Pro'",
+    'ibm-plex-mono': "'IBM Plex Mono'",
+    'inconsolata': "'Inconsolata'",
+    'space-mono': "'Space Mono'",
+};
+
+function applyFont(font) {
+    const family = fontFamilyMap[font] ?? fontFamilyMap['jetbrains-mono'];
+    document.documentElement.style.setProperty('--font-mono', family);
 }
 
 function applyFooterPinBottom() {
@@ -1778,6 +1795,14 @@ function initSettings() {
     }
 
     // OpenWeather API key input handler
+    const fontSelect = document.getElementById('setting-font');
+    if (fontSelect) {
+        fontSelect.addEventListener('change', (e) => {
+            saveSettings('font', e.target.value);
+            applyFont(e.target.value);
+        });
+    }
+
     const apiKeyInput = document.getElementById('setting-weather-api-key');
     if (apiKeyInput) {
         apiKeyInput.addEventListener('input', (e) => {
@@ -1936,6 +1961,14 @@ function populateSettingsUI() {
     }
 
     // Populate OpenWeather API key input
+    const fontSelect = document.getElementById('setting-font');
+    if (fontSelect) {
+        fontSelect.addEventListener('change', (e) => {
+            saveSettings('font', e.target.value);
+            applyFont(e.target.value);
+        });
+    }
+
     const apiKeyInput = document.getElementById('setting-weather-api-key');
     if (apiKeyInput) {
         apiKeyInput.value = settings.openWeatherApiKey;
@@ -1945,6 +1978,17 @@ function populateSettingsUI() {
     const preferredColumnsSelect = document.getElementById('setting-preferred-columns');
     if (preferredColumnsSelect) {
         preferredColumnsSelect.value = settings.preferredColumns || 'auto';
+    }
+
+    const fontSelect = document.getElementById('setting-font');
+    if (fontSelect) {
+        fontSelect.innerHTML = Object.entries(fontFamilyMap)
+            .map(([id, family]) => {
+                const name = family.replace(/'/g, '');
+                return `<option value="${id}">${name}</option>`;
+            })
+            .join('');
+        fontSelect.value = settings.font;
     }
 
     // Populate search engine checkboxes
