@@ -2812,7 +2812,7 @@ function init() {
     fetch('./haiku.json')
         .then(r => r.json())
         .then(data => {
-            haikuData = data;
+            haikuData = data['haiku'] || [];
             updateHaiku();
         })
         .catch(() => {});
