@@ -299,6 +299,7 @@ function loadSettings() {
         footerCenter: localStorage.getItem('footerCenter') ?? defaults.footerCenter,
         footerRight: localStorage.getItem('footerRight') ?? defaults.footerRight,
         footerPinBottom: localStorage.getItem('footerPinBottom') ?? defaults.footerPinBottom,
+    keyboardHintsPosition: localStorage.getItem('keyboardHintsPosition') ?? defaults.keyboardHintsPosition,
         socialLinks: JSON.parse(localStorage.getItem('socialLinks')) ?? defaults.socialLinks,
         locale: localStorage.getItem('locale') ?? defaults.locale,
         quotes: JSON.parse(localStorage.getItem('quotes')) ?? defaults.quotes,
