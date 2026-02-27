@@ -1239,8 +1239,6 @@ function renderForecastWidget(forecasts, isMock = false) {
         const date = forecast.date ?? new Date(Date.now() + (index + 1) * 24 * 60 * 60 * 1000);
         const dayName = new Intl.DateTimeFormat(settings.locale, { weekday: 'short' }).format(date);
 
-        dayName = jDayNames[dayNames.indexOf(dayName)];
-
         let iconHTML;
         if (isMock) {
             iconHTML = `<i class="fa-solid ${forecast.icon}"></i>`;
