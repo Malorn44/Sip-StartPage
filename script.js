@@ -69,6 +69,16 @@ const LOCALES = {
     zu: "isiZulu"                   // Zulu
 };
 
+// === Separators per locale ===
+const GREETING_SEPARATORS = {
+  en: ",", es: ",", fr: ",", de: ",", it: ",", pt: ",", pt_br: ",",
+  ru: ",", ja: "、", zh_cn: "，", zh_tw: "，", kr: "、",
+  hi: ",", ar: "،", he: ":"
+};
+
+// === Right-to-left language codes ===
+const RTL_LANGS = ['ar', 'he', 'fa', 'ur', 'ps'];
+
 // ========================================
 // Default Data
 // ========================================
@@ -90,6 +100,13 @@ const defaultLocale = (() => {
     const base = lang.split("-")[0];
     return LOCALES[base] ? base : "en";
 })();
+
+const defaultGreetings = {
+    'morning': 'Good morning',
+    'afternoon': 'Good afternoon',
+    'evening': 'Good evening',
+    'night': 'Good night'
+}
 
 const defaultCategories = [
     { id: 'dev', name: 'Development', icon: 'fa-solid fa-code' },
@@ -298,6 +315,12 @@ function saveSettings(key, value) {
     settings[key] = value;
 }
 
+function loadGreetings() {
+    const saved = localStorage.getItem('greetings');
+    if (!saved) return defaultGreetings;
+    return JSON.parse(saved);
+}
+
 function loadCategories() {
     const saved = localStorage.getItem('categories');
     if (!saved) return [...defaultCategories];
@@ -331,6 +354,7 @@ function saveLinks(lnks) {
 
 // Initialize settings
 let settings = loadSettings();
+let greetings = loadGreetings();
 let categories = loadCategories();
 let links = loadLinks();
 let currentEngine = settings.preferredEngine;
@@ -760,27 +784,51 @@ function updateDateTime() {
     updateGreeting(now.getHours());
 }
 
+function getTimeBasedGreeting(hour) {
+    if (hour >= 5 && hour < 12) {
+        greeting = greetings.morning;
+        iconHtml = '<span class="nf-icon">󰖜</span>';
+    } else if (hour >= 12 && hour < 17) {
+        greeting = greetings.afternoon;
+        iconHtml = '<i class="fa-solid fa-sun"></i>';
+    } else if (hour >= 17 && hour < 21) {
+        greeting = greetings.evening;
+        iconHtml = '<span class="nf-icon">󰖛</span>';
+    } else {
+        greeting = greetings.night;
+        iconHtml = '<i class="fa-solid fa-moon"></i>';
+    }
+    return { greeting, iconHtml };
+}
+
+function greet(name, hour = 12, locale = 'en') {
+    // Normalize locale (lowercase, replace dash with underscore)
+    locale = locale.toLowerCase().replace('-', '_');
+    const lang = locale.split('_')[0];
+
+    const sep = GREETING_SEPARATORS[locale] || GREETING_SEPARATORS[lang] || ',';
+    let { greeting, iconHtml } = getTimeBasedGreeting(hour);
+
+    greeting = name ? `${greeting}${sep} ${name}` : greeting;
+
+    // Wrap in RTL marks if needed
+    if (RTL_LANGS.includes(lang)) {
+        greeting = `\u202B${greeting}\u202C`; // RLE and PDF marks
+    }
+
+    return { greeting, iconHtml };
+}
+
 function updateGreeting(hour) {
     if (!greetingElement) return;
 
     let greeting, iconHtml;
-
-    if (hour >= 5 && hour < 12) {
-        greeting = 'おはよう';
-        iconHtml = '<span class="nf-icon">󰖜</span>';
-    } else if (hour >= 12 && hour < 17) {
-        greeting = 'こんにちは';
-        iconHtml = '<i class="fa-solid fa-sun"></i>';
-    } else if (hour >= 17 && hour < 21) {
-        greeting = 'こんばんは';
-        iconHtml = '<span class="nf-icon">󰖛</span>';
-    } else {
-        greeting = 'おやすみ';
-        iconHtml = '<i class="fa-solid fa-moon"></i>';
-    }
-
     const userName = settings.userName;
-    greetingElement.textContent = userName ? `${greeting}、 ${userName}` : greeting;
+    const greetingData = greet(userName, hour, settings.locale);
+    greeting = greetingData.greeting;
+    iconHtml = greetingData.iconHtml;
+
+    greetingElement.textContent = greeting;
 
     const iconElement = document.getElementById('greeting-icon');
     if (iconElement) {
@@ -1715,6 +1763,7 @@ function initSettings() {
                 renderHeaderSettings();
                 renderFooterSettings();
             } else if (tabId === 'widgets') {
+                renderGreetingSettings();
                 renderSocialLinksSettings();
                 renderQuotesSettings();
                 renderHaikuSettings();
@@ -1919,6 +1968,21 @@ function initSettings() {
             updateWeather();
         });
     }
+
+    // Greetings handlers
+    const greetingInputs = document.querySelectorAll('.setting-input[id^="greeting-"]');
+    greetingInputs.forEach(input => {
+        const id = input.id.replace('greeting-', '');
+        if (greetings[id]) {
+            input.value = greetings[id];
+        }
+
+        // save on input
+        input.addEventListener('input', (e) => {
+            greetings[id] = e.target.value;
+            saveSettings('greetings', greetings);
+        });
+    });
 
     // Background image upload handlers
     const backgroundImageBtn = document.getElementById('background-image-btn');
@@ -2588,6 +2652,22 @@ function renderSocialLinksSettings() {
             saveSettings('socialLinks', settings.socialLinks);
             updateFooter();
         });
+    });
+}
+
+// ========================================
+// Greeting Management
+// ========================================
+
+function renderGreetingSettings() {
+    const greetings = loadGreetings();
+    const timesOfDay = ['morning', 'afternoon', 'evening', 'night'];
+
+    timesOfDay.forEach(time => {
+        const input = document.getElementById(`greeting-${time}`);
+        if (input && greetings[time] !== undefined) {
+            input.value = greetings[time];
+        }
     });
 }
 

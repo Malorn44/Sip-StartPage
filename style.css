@@ -1781,7 +1781,8 @@ body {
     text-decoration: underline;
 }
 
-.setting-label i {
+.setting-label i,
+.setting-label .nf-icon {
     color: var(--primary);
     width: 20px;
     text-align: center;
