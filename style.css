@@ -981,9 +981,24 @@ body {
     display: none;
 }
 
+.search-row.search-hidden .toolbar-btns {
+    position: fixed;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+}
+
+.search-row.search-hidden .toolbar-btns.left {
+    left: var(--spacing-sm);
+    right: auto;
+}
+
 .toolbar-btns {
     display: flex;
     gap: var(--spacing-xs);
+}
+
+.toolbar-btns.left {
+    order: -1;
 }
 
 .toolbar-btn {

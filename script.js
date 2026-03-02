@@ -226,8 +226,9 @@ function loadSettings() {
         showSeconds: 'false',
         tempUnit: 'F',
         showQuotes: 'true',
+        leftSettings: 'false',
         showSearchBar: 'true',
-        showCateogires: 'true',
+        showCategories: 'true',
         preferredColumns: 'auto',
         enabledEngines: mobile ? ['google'] : ['google', 'duckduckgo', 'github', 'youtube'],
         preferredEngine: 'google',
@@ -278,6 +279,7 @@ function loadSettings() {
         showSeconds: localStorage.getItem('showSeconds') ?? defaults.showSeconds,
         tempUnit: localStorage.getItem('tempUnit') ?? defaults.tempUnit,
         showQuotes: localStorage.getItem('showQuotes') ?? defaults.showQuotes,
+        leftSettings: localStorage.getItem('leftSettings') ?? defaults.leftSettings,
         showSearchBar: localStorage.getItem('showSearchBar') ?? defaults.showSearchBar,
         showCategories: localStorage.getItem('showCategories') ?? defaults.showCategories,
         preferredColumns: localStorage.getItem('preferredColumns') ?? defaults.preferredColumns,
@@ -577,6 +579,15 @@ function applyCategoriesVisibility() {
 
     if (categoriesSection) {
         categoriesSection.classList.toggle('categories-hidden', !isVisible);
+    }
+}
+
+function applySettingsBtnPosition() {
+    const toolbar = document.querySelector('.toolbar-btns');
+    const leftSettings = settings.leftSettings === 'true';
+
+    if (toolbar) {
+        toolbar.classList.toggle('left', leftSettings);
     }
 }
 
@@ -1821,6 +1832,8 @@ function initSettings() {
                 applyCreditsVisibility();
             } else if (setting === 'footerPinBottom') {
                 applyFooterPinBottom();
+            } else if (setting === 'leftSettings') {
+                applySettingsBtnPosition();
             } else if (setting === 'showSearchBar') {
                 applySearchVisibility();
             } else if (setting === 'showCategories') {
@@ -3102,6 +3115,9 @@ function init() {
     } else if (settings.enabledEngines.length > 0) {
         setSearchEngine(settings.enabledEngines[0]);
     }
+
+    // Set settings location
+    applySettingsBtnPosition();
 
     // Set search visibility
     applySearchVisibility();
